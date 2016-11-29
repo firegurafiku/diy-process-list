@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace DIYProcessList
+namespace ProcessList
 {
     public sealed class ProcessListRetriever
     {
