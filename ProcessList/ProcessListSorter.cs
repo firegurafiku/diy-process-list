@@ -6,29 +6,24 @@ using System.Diagnostics;
 
 namespace ProcessList
 {
-    public sealed class ProcessListRetriever
+    public static class ProcessListSorter
     {
-        public PropertyInfo SortKey { get; set; }
-
-        public bool SortAscending { get; set; }
-
-        public IList<Process> Retrieve()
+        public static IList<Process> Sort(
+            IList<Process> processes, PropertyInfo key, bool descending = false)
         {
-            List<Process> result = Process.GetProcesses().ToList();
+            // http://stackoverflow.com/a/28673135
+            List<Process> result = processes.ToList();
 
             // If no sort criterion is set, return processes as is, unsorted.
-            if (SortKey == null)
+            if (key == null)
                 return result;
 
-            // Caching 'ascending' is going to help if SortAscendig changed by
-            // another thread while the sorting is in progress.
-            var getter = EmitKeyPropertyGetter(SortKey);
-            bool ascending = SortAscending;
+            var getter = EmitKeyPropertyGetter(key);
             Comparison<Process> comparison = (a, b) => {
                 IComparable ac = getter(a);
                 IComparable bc = getter(b);
                 int compareResult = ac == null ? -1 : ac.CompareTo(bc);
-                return ascending ? compareResult : -compareResult;
+                return descending ? compareResult : -compareResult;
             };
 
             result.Sort(comparison);
