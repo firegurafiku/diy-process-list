@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Diagnostics;
 
@@ -34,8 +35,12 @@ namespace ProcessList
 
         private static Func<Process, IComparable> EmitKeyPropertyGetter(PropertyInfo key)
         {
-            // TODO: Speedup.
-            return (process => (IComparable)key.GetValue(process, null));
+            var lambdaParam = Expression.Parameter(typeof(Process));
+            return Expression.Lambda<Func<Process, IComparable>>(
+                Expression.Convert(
+                    Expression.Property(lambdaParam, key),
+                    typeof(IComparable)),
+                lambdaParam).Compile();
         }
     }
 }
