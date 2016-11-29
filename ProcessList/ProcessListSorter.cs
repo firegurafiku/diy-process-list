@@ -7,6 +7,8 @@ using System.Diagnostics;
 
 namespace ProcessList
 {
+    using PropertyGetter = Func<Process, IComparable>;
+
     public static class ProcessListSorter
     {
         public static IList<Process> Sort(
@@ -19,7 +21,13 @@ namespace ProcessList
             if (key == null)
                 return result;
 
-            var getter = EmitKeyPropertyGetter(key);
+            PropertyGetter getter;
+            if (!_getterCache.TryGetValue(key, out getter))
+            {
+                getter = EmitKeyPropertyGetter(key);
+                _getterCache.Add(key, getter);
+            }
+
             Comparison<Process> comparison = (first, second) => {
                 IComparable firstKey  = getter(first);
                 IComparable secondKey = getter(second);
@@ -33,10 +41,13 @@ namespace ProcessList
             return result;
         }
 
-        private static Func<Process, IComparable> EmitKeyPropertyGetter(PropertyInfo key)
+        private static Dictionary<PropertyInfo, PropertyGetter> _getterCache = 
+                                        new Dictionary<PropertyInfo,PropertyGetter>();
+
+        private static PropertyGetter EmitKeyPropertyGetter(PropertyInfo key)
         {
             var lambdaParam = Expression.Parameter(typeof(Process));
-            return Expression.Lambda<Func<Process, IComparable>>(
+            return Expression.Lambda<PropertyGetter>(
                 Expression.Convert(
                     Expression.Property(lambdaParam, key),
                     typeof(IComparable)),
