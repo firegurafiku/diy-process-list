@@ -23,6 +23,9 @@ namespace TestProcessList
             ProcessLister lister = new ProcessLister();
             var processes = lister.ListProcesses();
 
+            if (!System.Environment.Is64BitProcess)
+                processes = processes.Where(p => p.CheckAccessible()).ToList();
+
             var procByIdAsc    = PLS.Sort(processes, propInfoId);
             var procByIdDesc   = PLS.Sort(processes, propInfoId, descending: true);
             var procByNameAsc  = PLS.Sort(processes, propInfoName);
