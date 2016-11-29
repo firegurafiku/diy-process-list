@@ -22,8 +22,8 @@ namespace ProcessList
             Comparison<Process> comparison = (a, b) => {
                 IComparable ac = getter(a);
                 IComparable bc = getter(b);
-                int compareResult = ac == null ? -1 : ac.CompareTo(bc);
-                return descending ? compareResult : -compareResult;
+                int compareResult = (ac == null ? -1 : ac.CompareTo(bc));
+                return !descending ? compareResult : -compareResult;
             };
 
             result.Sort(comparison);
