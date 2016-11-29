@@ -10,9 +10,12 @@ namespace ProcessList
 
     public sealed class ProcessLister: IProcessLister
     {
-        public IList<Process> ListProcesses()
+        public IList<Process> ListProcesses(bool onlyAccessible = true)
         {
-            return Process.GetProcesses();
+            var processes = Process.GetProcesses();
+            return !onlyAccessible
+                ? processes.ToList()
+                : processes.Where(p => p.CheckAccessible()).ToList();
         }
     }
 

@@ -9,6 +9,6 @@ namespace ProcessList
 {
     public interface IProcessLister
     {
-        IList<Process> ListProcesses();
+        IList<Process> ListProcesses(bool onlyAccessible = true);
     }
 }

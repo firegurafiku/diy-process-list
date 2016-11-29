@@ -21,10 +21,11 @@ namespace TestProcessList
             var propInfoTime = typeof(Process).GetProperty("StartTime");
 
             ProcessLister lister = new ProcessLister();
-            var processes = lister.ListProcesses();
+            var processes = lister.ListProcesses(
+                    onlyAccessible: !System.Environment.Is64BitProcess);
 
-            if (!System.Environment.Is64BitProcess)
-                processes = processes.Where(p => p.CheckAccessible()).ToList();
+            Assert.IsNotNull(processes);
+            Assert.IsTrue(processes.Count > 0);
 
             var procByIdAsc    = PLS.Sort(processes, propInfoId);
             var procByIdDesc   = PLS.Sort(processes, propInfoId, descending: true);
