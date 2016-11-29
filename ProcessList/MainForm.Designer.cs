@@ -60,12 +60,13 @@
             // 
             this.uiDescriptionLabel.AutoSize = true;
             this.uiDescriptionLabel.BackColor = System.Drawing.SystemColors.Highlight;
+            this.uiDescriptionLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiDescriptionLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.uiDescriptionLabel.Location = new System.Drawing.Point(3, 0);
             this.uiDescriptionLabel.Name = "uiDescriptionLabel";
             this.uiDescriptionLabel.Padding = new System.Windows.Forms.Padding(5);
             this.tableLayoutPanel1.SetRowSpan(this.uiDescriptionLabel, 3);
-            this.uiDescriptionLabel.Size = new System.Drawing.Size(246, 49);
+            this.uiDescriptionLabel.Size = new System.Drawing.Size(260, 63);
             this.uiDescriptionLabel.TabIndex = 2;
             this.uiDescriptionLabel.Text = "Below is the list of all processes we were able to obtain access to; there may be" +
     " other projects running on the system.\r\n";
@@ -78,6 +79,7 @@
             this.uxExitButton.TabIndex = 5;
             this.uxExitButton.Text = "E&xit";
             this.uxExitButton.UseVisualStyleBackColor = true;
+            this.uxExitButton.Click += new System.EventHandler(this.uxExitButton_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -148,9 +150,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(445, 541);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.MinimumSize = new System.Drawing.Size(400, 400);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(4);
-            this.Text = "Form1";
+            this.Text = "DIY Process List";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

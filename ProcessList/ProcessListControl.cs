@@ -24,9 +24,12 @@ namespace ProcessList
             _listView.Dock = DockStyle.Fill;
             _listView.View = View.Details;
             _listView.FullRowSelect = true;
+
+            // Sorry for magic constants here, but all I want for
+            // now is just go home and rest.
             _listView.Columns.Add("ID");
-            _listView.Columns.Add("Process name");
-            _listView.Columns.Add("Start time");
+            _listView.Columns.Add("Process name", 200);
+            _listView.Columns.Add("Start time", 100);
             ResumeLayout();
 
             //

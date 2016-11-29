@@ -17,6 +17,7 @@ namespace ProcessList
         public MainForm()
         {
             InitializeComponent();
+            uxSortKeyComboBox.SelectedIndex = 0;
         }
 
         private void RefreshProcessList(string propName, bool descending)
@@ -46,6 +47,11 @@ namespace ProcessList
         private void RefreshTimerTickEvent(object sender, EventArgs e)
         {
             uxProcessList.RefreshProcesses();
+        }
+
+        private void uxExitButton_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         
