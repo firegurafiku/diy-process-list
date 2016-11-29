@@ -60,6 +60,9 @@
     <Compile Include="IProcessLister.cs" />
     <Compile Include="ProcessLister.cs" />
     <Compile Include="ProcessListSorter.cs" />
+    <Compile Include="ProcessListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
