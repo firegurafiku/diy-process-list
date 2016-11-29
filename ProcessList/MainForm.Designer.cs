@@ -28,14 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             ProcessList.ProcessLister processLister1 = new ProcessList.ProcessLister();
             this.uxSortKeyComboBox = new System.Windows.Forms.ComboBox();
             this.uiDescriptionLabel = new System.Windows.Forms.Label();
             this.uxExitButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.processListControl1 = new ProcessList.ProcessListControl();
+            this.uxDescendingCheckbox = new System.Windows.Forms.CheckBox();
+            this.uxListRefreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.uxProcessList = new ProcessList.ProcessListControl();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,10 +45,16 @@
             // 
             this.uxSortKeyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.uxSortKeyComboBox.FormattingEnabled = true;
+            this.uxSortKeyComboBox.Items.AddRange(new object[] {
+            "-- Unsorted --",
+            "Id",
+            "ProcessName",
+            "StartTime"});
             this.uxSortKeyComboBox.Location = new System.Drawing.Point(269, 16);
             this.uxSortKeyComboBox.Name = "uxSortKeyComboBox";
             this.uxSortKeyComboBox.Size = new System.Drawing.Size(165, 21);
             this.uxSortKeyComboBox.TabIndex = 2;
+            this.uxSortKeyComboBox.SelectedIndexChanged += new System.EventHandler(this.RefreshProcessListEvent);
             // 
             // uiDescriptionLabel
             // 
@@ -77,11 +85,11 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.uiDescriptionLabel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.processListControl1, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.uxProcessList, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.uxSortKeyComboBox, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.uxExitButton, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.checkBox1, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.uxDescendingCheckbox, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -103,29 +111,36 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Order &by property";
             // 
-            // checkBox1
+            // uxDescendingCheckbox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(269, 43);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(83, 17);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "&Descending";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.uxDescendingCheckbox.AutoSize = true;
+            this.uxDescendingCheckbox.Location = new System.Drawing.Point(269, 43);
+            this.uxDescendingCheckbox.Name = "uxDescendingCheckbox";
+            this.uxDescendingCheckbox.Size = new System.Drawing.Size(83, 17);
+            this.uxDescendingCheckbox.TabIndex = 3;
+            this.uxDescendingCheckbox.Text = "&Descending";
+            this.uxDescendingCheckbox.UseVisualStyleBackColor = true;
+            this.uxDescendingCheckbox.CheckedChanged += new System.EventHandler(this.RefreshProcessListEvent);
             // 
-            // processListControl1
+            // uxListRefreshTimer
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.processListControl1, 2);
-            this.processListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.processListControl1.Location = new System.Drawing.Point(3, 71);
-            this.processListControl1.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
-            this.processListControl1.Name = "processListControl1";
-            this.processListControl1.ProcessLister = processLister1;
-            this.processListControl1.ProcessSortDescending = false;
-            this.processListControl1.ProcessSortKey = null;
-            this.processListControl1.Size = new System.Drawing.Size(431, 430);
-            this.processListControl1.TabIndex = 4;
-            this.processListControl1.Text = "processListControl1";
+            this.uxListRefreshTimer.Enabled = true;
+            this.uxListRefreshTimer.Interval = 2000;
+            this.uxListRefreshTimer.Tick += new System.EventHandler(this.RefreshTimerTickEvent);
+            // 
+            // uxProcessList
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.uxProcessList, 2);
+            this.uxProcessList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uxProcessList.Location = new System.Drawing.Point(3, 71);
+            this.uxProcessList.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
+            this.uxProcessList.Name = "uxProcessList";
+            this.uxProcessList.ProcessLister = processLister1;
+            this.uxProcessList.ProcessSortDescending = false;
+            this.uxProcessList.ProcessSortKey = null;
+            this.uxProcessList.Size = new System.Drawing.Size(431, 430);
+            this.uxProcessList.TabIndex = 4;
+            this.uxProcessList.Text = "processListControl1";
             // 
             // MainForm
             // 
@@ -144,13 +159,14 @@
 
         #endregion
 
-        private ProcessListControl processListControl1;
+        private ProcessListControl uxProcessList;
         private System.Windows.Forms.ComboBox uxSortKeyComboBox;
         private System.Windows.Forms.Label uiDescriptionLabel;
         private System.Windows.Forms.Button uxExitButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox uxDescendingCheckbox;
+        private System.Windows.Forms.Timer uxListRefreshTimer;
 
     }
 }

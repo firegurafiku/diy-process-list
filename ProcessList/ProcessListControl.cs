@@ -16,50 +16,94 @@ namespace ProcessList
     {
         public ProcessListControl()
         {
+            _processLister = new ProcessLister();
             _listView = new ListView();
+
+            SuspendLayout();
             _listView.Parent = this;
             _listView.Dock = DockStyle.Fill;
             _listView.View = View.Details;
+            _listView.FullRowSelect = true;
             _listView.Columns.Add("ID");
             _listView.Columns.Add("Process name");
             _listView.Columns.Add("Start time");
+            ResumeLayout();
 
-            ProcessLister = new ProcessLister();
-
-            // 
-            PopulateItems();
+            //
+            RefreshProcesses();
         }
 
-        public PropertyInfo ProcessSortKey { get; set; }
-
-        public bool ProcessSortDescending { get; set; }
-
-        public ProcessLister ProcessLister { get; set; }
-
-        private void PopulateItems()
-        {
-            var processes = new List<Process>();
-            if (ProcessLister != null)
-                processes.AddRange(ProcessLister.ListProcesses());
-
-            _listView.BeginUpdate();
-            _listView.Items.Clear();
-            foreach (var process in processes)
-            {
-                var cellTexts = new string[] {
-                    process.Id.ToString(),
-                    process.ProcessName,
-                    process.StartTime.ToShortDateString(),
-                };
-
-                var item = new ListViewItem(cellTexts);
-                _listView.Items.Add(item);
+        public PropertyInfo ProcessSortKey {
+            get { return _processSortKey; }
+            set {
+                if (_processSortKey != value)
+                {
+                    _processSortKey = value;
+                    RefreshProcesses();
+                }
             }
-            
-            _listView.EndUpdate();
+        }
 
+        public bool ProcessSortDescending {
+            get { return _processSortDescending; }
+            set
+            {
+                if (_processSortDescending != value)
+                {
+                    _processSortDescending = value;
+                    RefreshProcesses();
+                }
+            }
+        }
+
+        public ProcessLister ProcessLister {
+            get { return _processLister; }
+            set { _processLister = value;
+                  RefreshProcesses(); }
+        }
+
+        public void RefreshProcesses()
+        {
+            if (_listView == null)
+                return;
+            
+            if (_processLister == null)
+            {
+                _listView.Items.Clear();
+                return;
+            }
+
+            var processes = _processLister.ListProcesses();
+            try {
+                var sortedProcesses = ProcessListSorter.Sort(processes,
+                                ProcessSortKey, ProcessSortDescending).ToList();
+
+                _listView.BeginUpdate();
+                _listView.Items.Clear();
+
+                foreach (var process in sortedProcesses)
+                {
+                    var cellTexts = new string[] {
+                            process.Id.ToString(),
+                            process.ProcessName,
+                            process.StartTime.ToShortDateString(),
+                    };
+
+                    var item = new ListViewItem(cellTexts);
+                    _listView.Items.Add(item);
+                }
+
+                _listView.EndUpdate();
+            }
+            finally {
+                foreach (IDisposable process in processes)
+                    process.Dispose();
+            }
         }
 
         private ListView _listView;
+        private ProcessLister _processLister;
+        private PropertyInfo _processSortKey;
+        bool _processSortDescending;
     }
 }
