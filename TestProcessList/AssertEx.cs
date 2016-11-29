@@ -7,13 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TestProcessList
 {
-    internal static class LinqHelpers
-    {
-        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> sequence)
-        {
-            return new HashSet<T>(sequence);
-        }
-    }
+    using ProcessList;
 
     internal static class AssertEx
     {
@@ -29,6 +23,5 @@ namespace TestProcessList
             Assert.IsNotNull(second);
             Assert.IsTrue(first.ToHashSet().SetEquals(second));
         }
-
     }
 }

@@ -19,12 +19,14 @@ namespace ProcessList
                 return result;
 
             var getter = EmitKeyPropertyGetter(key);
-            Comparison<Process> comparison = (a, b) => {
-                IComparable ac = getter(a);
-                IComparable bc = getter(b);
-                int compareResult = (ac == null ? -1 : ac.CompareTo(bc));
-                return !descending ? compareResult : -compareResult;
+            Comparison<Process> comparison = (first, second) => {
+                IComparable firstKey  = getter(first);
+                IComparable secondKey = getter(second);
+                return ComparisonHelpers.NullAwareComparison0(firstKey, secondKey);
             };
+
+            if (descending)
+                comparison = comparison.FlipComparison();
 
             result.Sort(comparison);
             return result;

@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComparisonHelpers.cs" />
+    <Compile Include="LinqHelpers.cs" />
+    <Compile Include="LinqOrderingHelpers.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

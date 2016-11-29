@@ -28,10 +28,11 @@ namespace TestProcessList
             Assert.IsTrue(processes.Count > 0);
 
             var procByIdAsc    = PLS.Sort(processes, propInfoId);
-            var procByIdDesc   = PLS.Sort(processes, propInfoId, descending: true);
             var procByNameAsc  = PLS.Sort(processes, propInfoName);
-            var procByNameDesc = PLS.Sort(processes, propInfoName, descending: true);
+            var procByIdDesc   = PLS.Sort(processes, propInfoId, descending: true);
             var procByTimeAsc  = PLS.Sort(processes, propInfoTime);
+            var procByNameDesc = PLS.Sort(processes, propInfoName, descending: true);
+            
             var procByTimeDesc = PLS.Sort(processes, propInfoTime, descending: true);
 
             // Ensure that sorting does not modify original list, but just reorder.
@@ -43,16 +44,12 @@ namespace TestProcessList
             AssertEx.AreSameSets(procByTimeDesc, processes);
 
             // Ensure that returned lists are appropriately ordered.
-            AssertEx.AreSameSequences(procByIdAsc, processes.OrderBy(p => p.Id));
-            AssertEx.AreSameSequences(procByNameAsc, processes.OrderBy(p => p.ProcessName));
-            AssertEx.AreSameSequences(procByTimeAsc, processes.OrderBy(p => p.StartTime));
-
-            AssertEx.AreSameSequences(procByIdDesc,
-                processes.OrderByDescending(p => p.Id));
-            AssertEx.AreSameSequences(procByNameDesc,
-                processes.OrderByDescending(p => p.ProcessName));
-            AssertEx.AreSameSequences(procByTimeDesc,
-                processes.OrderByDescending(p => p.StartTime));
+            Assert.IsTrue(procByIdAsc.IsOrderedAscending(p => p.Id));
+            Assert.IsTrue(procByNameAsc.IsOrderedAscending(p => p.ProcessName));
+            Assert.IsTrue(procByTimeAsc.IsOrderedAscending(p => p.StartTime));
+            Assert.IsTrue(procByIdDesc.IsOrderedDescending(p => p.Id));
+            Assert.IsTrue(procByNameDesc.IsOrderedDescending(p => p.ProcessName));
+            Assert.IsTrue(procByTimeDesc.IsOrderedDescending(p => p.StartTime));
         }
     }
 }
