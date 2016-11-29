@@ -33,7 +33,7 @@ namespace ProcessList
         private void RefreshProcessListEvent(object sender, EventArgs e)
         {
             object selItem = uxSortKeyComboBox.SelectedItem;
-            string propName = selItem != null 
+            string propName = selItem != null
                     ? selItem.ToString()
                     : "";
 

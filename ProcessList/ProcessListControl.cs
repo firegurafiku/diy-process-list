@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
+using System.Globalization;
 
 namespace ProcessList
 {
@@ -29,10 +30,13 @@ namespace ProcessList
             // now is just go home and rest.
             _listView.Columns.Add("ID");
             _listView.Columns.Add("Process name", 200);
-            _listView.Columns.Add("Start time", 100);
+            _listView.Columns.Add("Start time", 130);
             ResumeLayout();
 
-            //
+            // It may be dangerous to enumerate processes here as this
+            // code gets running not only in runtime, but also in Visual
+            // Studio desing time. But we have already add protection
+            // against Win32-to-Win64 access, so prey it'd suffice.
             RefreshProcesses();
         }
 
@@ -59,14 +63,21 @@ namespace ProcessList
             }
         }
 
-        public ProcessLister ProcessLister {
+        public IProcessLister ProcessLister {
             get { return _processLister; }
-            set { _processLister = value;
-                  RefreshProcesses(); }
+            set
+            {
+                if (_processLister != value)
+                {
+                    _processLister = value;
+                    RefreshProcesses();
+                }
+            }
         }
 
         public void RefreshProcesses()
         {
+            // Don't know how it can happen, but let it be here.
             if (_listView == null)
                 return;
             
@@ -76,6 +87,9 @@ namespace ProcessList
                 return;
             }
 
+            // Class System.Diagnostics.Process implements IDisposable, so we must
+            // properly close all the object we've optained. Newer C# versions can
+            // do it with a single 'using' statement; we have to use 'try'.
             var processes = _processLister.ListProcesses();
             try {
                 var sortedProcesses = ProcessListSorter.Sort(processes,
@@ -89,7 +103,7 @@ namespace ProcessList
                     var cellTexts = new string[] {
                             process.Id.ToString(),
                             process.ProcessName,
-                            process.StartTime.ToShortDateString(),
+                            process.StartTime.ToString()
                     };
 
                     var item = new ListViewItem(cellTexts);
@@ -105,7 +119,7 @@ namespace ProcessList
         }
 
         private ListView _listView;
-        private ProcessLister _processLister;
+        private IProcessLister _processLister;
         private PropertyInfo _processSortKey;
         bool _processSortDescending;
     }

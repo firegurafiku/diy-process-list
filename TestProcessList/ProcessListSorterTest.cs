@@ -44,6 +44,9 @@ namespace TestProcessList
             AssertEx.AreSameSets(procByTimeDesc, processes);
 
             // Ensure that returned lists are appropriately ordered.
+            // I know I shouldn't use 'IsOrdered*' until they're extensively tested,
+            // but let's just suppose they're tested. It's already too much
+            // boilerplate code for today.
             Assert.IsTrue(procByIdAsc.IsOrderedAscending(p => p.Id));
             Assert.IsTrue(procByNameAsc.IsOrderedAscending(p => p.ProcessName));
             Assert.IsTrue(procByTimeAsc.IsOrderedAscending(p => p.StartTime));
